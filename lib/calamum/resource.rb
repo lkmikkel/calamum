@@ -3,7 +3,7 @@
 # So anywhere in view template we can use this object.
 class Calamum::Resource
   attr_accessor :uri, :action, :headers,
-    :auth, :params, :errors, :description, :response, :tryit
+    :auth, :params, :status_codes, :description, :request_body, :request_description, :response_body, :tryit, :example_id
 
   # Initialize object from attributes.
   #
@@ -14,10 +14,19 @@ class Calamum::Resource
     @headers = attrs['headers'] || {}
     @auth = !!attrs['authentication']
     @params = attrs['params'] || {}
-    @errors = attrs['errors'] || {}
+    @status_codes = attrs['status_codes'] || {}
     @description = attrs['description']
-    @response = attrs['response']
+    @example_id = attrs['example_id'] || ''
+    @response_body = attrs['response_body']
+    @request_body = attrs['request_body']
+    @request_description = attrs['request_description'] || {}
     @tryit = attrs['tryit']
+  end
+
+  def curl_example(url)
+    header_opts = @headers.collect { | key, c | "-H \"#{key}: #{c['value']}\"" } * ' '
+    req_body = @request_body.nil? ? '' : "-d '#{@request_body}' "
+    "curl -i -k #{header_opts} -X #{@action} #{req_body}#{url}#{@uri.gsub(':id', @example_id)}"
   end
   
   # @override

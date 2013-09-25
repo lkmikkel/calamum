@@ -90,6 +90,7 @@ class Calamum::Runner
       :name => @definition.get_name,
       :resources => @definition.resources,
       :description => @definition.get_description,
+      :authentication_method => @definition.get_authentication_method,
       :version => @definition.get_version
     }
 

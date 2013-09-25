@@ -1,137 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="">
-<meta name="author" content="">
-<link href="./assets/stylesheets/bootstrap.css" rel="Stylesheet"/>
-<link href="./assets/stylesheets/bootstrap-responsive.css" rel="Stylesheet"/>
-<link href="./assets/stylesheets/docs.css" rel="Stylesheet"/>
-<link href="./assets/stylesheets/main.css" rel="Stylesheet"/>
-<script type="text/javascript" src="./assets/javascripts/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="./assets/javascripts/bootstrap.js"></script>
-<title><%= @name %> Rest API Doc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link href="./assets/stylesheets/bootstrap.css" rel="Stylesheet"/>
+  <link href="./assets/stylesheets/bootstrap-responsive.css" rel="Stylesheet"/>
+  <link href="./assets/stylesheets/docs.css" rel="Stylesheet"/>
+  <link href="./assets/stylesheets/main.css" rel="Stylesheet"/>
+  <script type="text/javascript" src="./assets/javascripts/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="./assets/javascripts/bootstrap.js"></script>
+  <title><%= @name %> Rest API Doc</title>
 </head>
 
 <body data-spy="scroll" data-target=".bs-docs-sidebar">
 <header class="jumbotron subhead" id="overview">
-<div class="container">
-  <h1><%= @name %></h1>
-  <p class="lead"><%= @url %></p>
-</div>
+  <div class="container">
+    <h1><%= @name %></h1>
+
+    <p class="lead"><%= @url %></p>
+  </div>
 </header>
 <div class="container">
 <div class="row">
 <div class="span3 bs-docs-sidebar">
   <ul class="nav nav-list bs-docs-sidenav affix-top">
     <% if @description %>
-    <li class="active">
-    <a href="#overview">
-    <i class="icon-chevron-right"></i>Overview</a>
-    </li>
+        <li class="active">
+          <a href="#overview">
+            <i class="icon-chevron-right"></i>Overview</a>
+        </li>
     <% end %>
-    <% @resources.keys.each_with_index do |key,index| %>
-    <li class="<%= !@description && (index == 0) ? 'active': '' %>">
-    <a href="#<%= key %>_section">
-    <i class="icon-chevron-right"></i><%= key %></a>
-    </li>
+    <% if @authentication_method %>
+        <li>
+          <a href="#authentication">
+            <i class="icon-chevron-right"></i>Authentication</a>
+        </li>
+    <% end %>
+    <% @resources.keys.each_with_index do |key, index| %>
+        <li class="<%= !@description && (index == 0) ? 'active' : '' %>">
+          <a href="#<%= key %>_section">
+            <i class="icon-chevron-right"></i><%= key %></a>
+        </li>
     <% end %>
   </ul>
 </div>
 <div class="span9">
-  <% if @description %>
-  <section id="overview">
-    <div class="page-header">
-      <h2>Overview</h2>
-    </div>
-    <div id="overview-body">
-    <%= @description %>
-    </div>
-  </section>
-  <% end %>
-  <% @resources.each do |name, requests| %>
-  <section id="<%= name %>_section">
-    <div class="page-header">
-      <h2><%= name.capitalize %> resource</h2>
-    </div>
-    <div class="accordion" id="accordion2">
-    <% requests.each do |req| %>
-    <div class="accordion-group">
-      <div class="accordion-heading <%= req.action.downcase %>Header">
-	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= req.object_id %>">
-          <span><span class="label <%= req.action_label %>"><%= req.action %></span><h4 style="display:inline;"><%= "  #{req.uri}" %></h4></span>
-        </a>
+<% if @description %>
+    <section id="overview">
+      <div class="page-header">
+        <h2>Overview</h2>
       </div>
-      <div id="<%= req.object_id %>" class="accordion-body collapse">
-      <div class="accordion-inner">
-	<ul class="nav nav-tabs">
-	  <li class="active"><a href="#description_<%= req.object_id %>"  data-toggle="tab">Description</a></li>
-	  <li><a href="#header_<%= req.object_id %>" data-toggle="tab">Header</a></li>
-	  <li><a href="#params_<%= req.object_id %>" data-toggle="tab">Parameters</a></li>
-	  <li><a href="#response_<%= req.object_id %>" data-toggle="tab">Response</a></li>
-	</ul>
-        <div class="tab-content">
-	 <div class="tab-pane active" id="description_<%= req.object_id %>"><%= req.description %></div>
-	 <div class="tab-pane" id="header_<%= req.object_id %>">
-	   <% unless req.headers.empty? %>
-	   <table class="table table-bordered table-hover">
-	     <thead>
-	       <tr>
-		 	<th>Key</th>
-		 	<th>Value</th>
-	       </tr>
-	     </thead>
-	     <tbody>
-	       <% req.headers.each do |key, content| %>
-	       <tr>
-		 <td><%= key %></td>
-		 <td><%= content %></td>
-	       </tr>
-	       <% end %>
-	     </tbody>
-	   </table>
-	   <% else %>
-	      Request without headers
-	   <% end %>
-	 </div>
-	 <div class="tab-pane" id="params_<%= req.object_id %>">
-	   <% unless req.params.empty? %>
-	   <table class="table table-bordered table-hover">
-	     <thead>
-	       <tr>
-		 <th>Label</th>
-		 <th>Description</th>
-		 <th>Type</th>
-		 <th>Required</th>
-	       </tr>
-	     </thead>
-	     <tbody>
-	       <% req.params.each do |key, content| %>
-	       <tr>
-		 <td><%= key %></td>
-		 <td><%= content['description'] %></td>
-		 <td><%= content['type'] %></td>
-		 <td><%= content['required'] %></td>
-	       </tr>
-	       <% end %>
-	     </tbody>
-	   </table>
-	   <% else %>
-	      Request without parametres
-	   <% end %>
-	 </div>
-	   <div class="tab-pane content" id="response_<%= req.object_id %>">
-		<% if req.response %>
-	  	 <pre class="prettyprint"><%= pj req.response %></pre>
-		 <% end%>
-	   </div>
-        </div>
-       </div>
-     </div>
-    </div>
-    <% end %>
-   </div>
- </section>
+      <div id="overview-body">
+        <%= @description %>
+      </div>
+    </section>
+<% end %>
+<% if @authentication_method %>
+    <section id="authentication">
+      <div class="page-header">
+        <h2>Authentication</h2>
+      </div>
+      <div id="authentication-body">
+        <%= @authentication_method %>
+      </div>
+    </section>
+<% end %>
+<% @resources.each do |name, requests| %>
+    <section id="<%= name %>_section">
+      <div class="page-header">
+        <h2><%= name.capitalize %> resource</h2>
+      </div>
+      <div class="accordion" id="accordion2">
+        <% requests.each do |req| %>
+            <div class="accordion-group">
+              <div class="accordion-heading <%= req.action.downcase %>Header">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= req.object_id %>">
+                  <span><span class="label <%= req.action_label %>"><%= req.action %></span><h4 style="display:inline;"><%= "  #{req.uri}" %></h4></span>
+                </a>
+              </div>
+              <div id="<%= req.object_id %>" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <div class="resource-info">
+                    <table style="width: 100%;">
+                      <tr>
+                        <td style="vertical-align: top;"><%= req.description %></td>
+                        <td style="float: right;">
+                          <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                              <th colspan="2">Resource information</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                              <td>URL</td>
+                              <td><%= @url+req.uri %></td>
+                            </tr>
+                            <tr>
+                              <td>Authentication</td>
+                              <td><%= req.auth ? 'Required' : 'Optional' %></td>
+                            </tr>
+                            <tr>
+                              <td>Response format</td>
+                              <td>json</td>
+                            </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                    <br/>
+                  </div>
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a href="#header_<%= req.object_id %>" data-toggle="tab">Header</a>
+                    </li>
+                    <li><a href="#params_<%= req.object_id %>" data-toggle="tab">Parameters</a></li>
+                    <li><a href="#request_body_<%= req.object_id %>" data-toggle="tab">Request body</a></li>
+                    <li><a href="#status_codes_<%= req.object_id %>" data-toggle="tab">Status codes</a></li>
+                    <li><a href="#response_body_<%= req.object_id %>" data-toggle="tab">Response body</a>
+                    </li>
+                    <li><a href="#curl_<%= req.object_id %>" data-toggle="tab">Code example</a></li>
+                  </ul>
+                  <div class="tab-content">
+                    <div class="tab-pane active" id="header_<%= req.object_id %>">
+                      <% unless req.headers.empty? %>
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                              <th>Key</th>
+                              <th>Value</th>
+                              <th>Description</th>
+                              <th>Required</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% req.headers.each do |key, content| %>
+                                <tr>
+                                  <td><%= key %></td>
+                                  <td><%= content['value'] %></td>
+                                  <td><%= content['description'] %></td>
+                                  <td><%= content['required'] %></td>
+                                </tr>
+                            <% end %>
+                            </tbody>
+                          </table>
+                      <% else %>
+                          Request without headers
+                      <% end %>
+                    </div>
+                    <div class="tab-pane" id="params_<%= req.object_id %>">
+                      <% unless req.params.empty? %>
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                              <th>Label</th>
+                              <th>Description</th>
+                              <th>Type</th>
+                              <th>Required</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% req.params.each do |key, content| %>
+                                <tr>
+                                  <td><%= key %></td>
+                                  <td><%= content['description'] %></td>
+                                  <td><%= content['type'] %></td>
+                                  <td><%= content['required'] %></td>
+                                </tr>
+                            <% end %>
+                            </tbody>
+                          </table>
+                      <% else %>
+                          Request without parametres
+                      <% end %>
+                    </div>
+                    <div class="tab-pane content" id="request_body_<%= req.object_id %>">
+                      <% if req.request_body %>
+                          <% unless req.request_description.empty? %>
+                              <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                  <th>Label</th>
+                                  <th>Description</th>
+                                  <th>Type</th>
+                                  <th>Required</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <% req.request_description.each do |key, content| %>
+                                    <tr>
+                                      <td><%= key %></td>
+                                      <td><%= content['description'] %></td>
+                                      <td><%= content['type'] %></td>
+                                      <td><%= content['required'] %></td>
+                                    </tr>
+                                <% end %>
+                                </tbody>
+                              </table>
+                          <% end %>
+                          <h5>Example of request body</h5>
+                          <pre class="prettyprint"><%= pj req.request_body %></pre>
+                      <% else %>
+                          Request without body
+                      <% end %>
+                    </div>
+                    <div class="tab-pane" id="status_codes_<%= req.object_id %>">
+                      <% unless req.status_codes.empty? %>
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                              <th>Status code</th>
+                              <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% req.status_codes.each do |status_code, description| %>
+                                <tr>
+                                  <td><%= status_code %></td>
+                                  <td><%= description %></td>
+                                </tr>
+                            <% end %>
+                            </tbody>
+                          </table>
+                      <% else %>
+                          Request without status codes (Yes, this API sucks!!)
+                      <% end %>
+                    </div>
+                    <div class="tab-pane content" id="response_body_<%= req.object_id %>">
+                      <% if req.response_body %>
+                          <h5>Example of response body</h5>
+                          <pre class="prettyprint"><%= pj req.response_body %></pre>
+                      <% else %>
+                          Response without body
+                      <% end %>
+                    </div>
+                    <div class="tab-pane content" id="curl_<%= req.object_id %>">
+                      <h5>Example request made with <a href="http://curl.haxx.se/" target="_blank">cURL</a></h5>
+                      <pre class="prettyprint"><%= req.curl_example(@url) %></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <% end %>
+      </div>
+    </section>
 <% end %>
 </div>
 </div>

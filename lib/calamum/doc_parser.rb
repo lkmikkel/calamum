@@ -22,6 +22,10 @@ class Calamum::DocParser
     @definition['description']
   end
 
+  def get_authentication_method
+    @definition['authentication_method']
+  end
+
   def get_resources
     Calamum::Config[:sort]? @definition['resources'].sort : @definition['resources']
   end

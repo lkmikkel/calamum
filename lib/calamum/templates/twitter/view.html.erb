@@ -47,11 +47,11 @@
             </div>
           </div>
 
-          <% if @resource.response %>
+          <% if @resource.response_body %>
             <div class="group-example-request">
               <h2>Example Response</h2>
               <div class="content">
-                <pre class="prettyprint"><%= pj @resource.response %></pre>
+                <pre class="prettyprint"><%= pj @resource.response_body %></pre>
               </div>
             </div>
           <% end %>

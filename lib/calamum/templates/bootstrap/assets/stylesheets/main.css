@@ -33,3 +33,8 @@ pre.prettyprint  {
  pre .pun  {
     color: #999;
 }
+
+.resource-info {
+    margin: 5px 5px 5px 5px;
+
+}
